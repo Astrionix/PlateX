@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
-import { Loader2, Utensils, Flame, ChevronRight, AlertCircle } from 'lucide-react';
+import { Loader2, Utensils, Flame, ChevronRight, AlertCircle, ChefHat, Trash2, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/components/AuthProvider';
 
 interface Meal {
     type: string;
@@ -26,10 +27,25 @@ interface DietPlan {
     advice: string;
 }
 
+interface SavedRecipe {
+    id: string;
+    name: string;
+    description: string;
+    time: string;
+    calories: number;
+    ingredients: string[];
+    instructions: string;
+    meal_type: string;
+    planned_date: string;
+}
+
 export default function Planner() {
+    const { user } = useAuth();
     const [profile, setProfile] = useState<any>(null);
     const [plan, setPlan] = useState<DietPlan | null>(null);
     const [loading, setLoading] = useState(false);
+    const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
+    const [loadingRecipes, setLoadingRecipes] = useState(false);
 
     useEffect(() => {
         const savedProfile = localStorage.getItem('platex_profile');
@@ -37,6 +53,27 @@ export default function Planner() {
             setProfile(JSON.parse(savedProfile));
         }
     }, []);
+
+    useEffect(() => {
+        if (user) {
+            fetchSavedRecipes();
+        }
+    }, [user]);
+
+    const fetchSavedRecipes = async () => {
+        setLoadingRecipes(true);
+        try {
+            const res = await fetch('/api/save-recipe');
+            const data = await res.json();
+            if (data.recipes) {
+                setSavedRecipes(data.recipes);
+            }
+        } catch (error) {
+            console.error('Error fetching saved recipes:', error);
+        } finally {
+            setLoadingRecipes(false);
+        }
+    };
 
     const generatePlan = async () => {
         setLoading(true);
@@ -68,8 +105,43 @@ export default function Planner() {
                 <div className="w-full max-w-4xl mx-auto pt-8">
                     <header className="mb-8">
                         <h2 className="text-3xl font-bold text-white mb-2">AI Diet Planner</h2>
-                        <p className="text-gray-400">Generate personalized meal plans based on your goals.</p>
+                        <p className="text-gray-400">Generate personalized meal plans and view your saved recipes.</p>
                     </header>
+
+                    {/* Saved Recipes Section */}
+                    {user && savedRecipes.length > 0 && (
+                        <div className="mb-8">
+                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <ChefHat className="text-green-400" /> My Saved Recipes
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {savedRecipes.map((recipe) => (
+                                    <div key={recipe.id} className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-5 hover:bg-gray-800/60 transition-colors">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <span className="text-xs font-bold text-green-400 uppercase tracking-wider">{recipe.meal_type}</span>
+                                                <h4 className="text-lg font-bold text-white">{recipe.name}</h4>
+                                            </div>
+                                            <span className="text-sm font-bold text-gray-300 bg-gray-700/50 px-3 py-1 rounded-full">
+                                                {recipe.calories} kcal
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-400 text-sm mb-3 line-clamp-2">{recipe.description}</p>
+                                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                                            <span className="flex items-center gap-1"><Clock size={12} /> {recipe.time}</span>
+                                            <span>📅 {new Date(recipe.planned_date).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {loadingRecipes && (
+                        <div className="flex justify-center py-8">
+                            <Loader2 className="animate-spin text-gray-400" />
+                        </div>
+                    )}
 
                     {!profile ? (
                         <div className="bg-yellow-500/10 border border-yellow-500/50 rounded-xl p-6 text-center">

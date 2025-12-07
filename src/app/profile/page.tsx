@@ -9,6 +9,8 @@ import { supabase } from '@/lib/supabaseClient';
 import dynamic from 'next/dynamic';
 
 const TrophyRoom = dynamic(() => import('@/components/TrophyRoom'), { ssr: false });
+const LevelSystem = dynamic(() => import('@/components/LevelSystem'), { ssr: false });
+const StreakBonus = dynamic(() => import('@/components/StreakBonus'), { ssr: false });
 
 const ALLERGIES_LIST = ['Nuts', 'Dairy', 'Gluten', 'Shellfish', 'Soy', 'Eggs'];
 const CONDITIONS_LIST = ['Diabetes', 'PCOS', 'Thyroid', 'Hypertension', 'High Cholesterol'];
@@ -325,246 +327,229 @@ export default function Profile() {
                         </div>
                     )}
 
-                    <div className="grid lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-gray-800/30 backdrop-blur-md border border-gray-700/50 rounded-2xl p-6 md:p-8 shadow-xl">
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    {/* Personal Details */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                                            <User className="text-blue-400" size={20} /> Personal Details
-                                        </h3>
-
-                                        <div>
-                                            <label className="block text-sm text-gray-400 mb-1">Name</label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                value={profile.name}
-                                                onChange={handleChange}
-                                                className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                                placeholder="Enter your name"
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm text-gray-400 mb-1">Age</label>
-                                                <input
-                                                    type="number"
-                                                    name="age"
-                                                    value={profile.age || ''}
-                                                    onChange={handleChange}
-                                                    className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                                    placeholder="Years"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm text-gray-400 mb-1">Gender</label>
-                                                <select
-                                                    name="gender"
-                                                    value={profile.gender}
-                                                    onChange={handleChange}
-                                                    className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                                >
-                                                    <option value="male">Male</option>
-                                                    <option value="female">Female</option>
-                                                    <option value="other">Other</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Body Stats */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                                            <Scale className="text-green-400" size={20} /> Body Stats
-                                        </h3>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm text-gray-400 mb-1">Height (cm)</label>
-                                                <div className="relative">
-                                                    <input
-                                                        type="number"
-                                                        name="height"
-                                                        value={profile.height || ''}
-                                                        onChange={handleChange}
-                                                        className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors pl-10"
-                                                        placeholder="175"
-                                                    />
-                                                    <Ruler className="absolute left-3 top-2.5 text-gray-500 w-4 h-4" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm text-gray-400 mb-1">Weight (kg)</label>
-                                                <div className="relative">
-                                                    <input
-                                                        type="number"
-                                                        name="weight"
-                                                        value={profile.weight || ''}
-                                                        onChange={handleChange}
-                                                        className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors pl-10"
-                                                        placeholder="70"
-                                                    />
-                                                    <Scale className="absolute left-3 top-2.5 text-gray-500 w-4 h-4" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div className="space-y-6">
+                        {/* Row 1: Profile Header Card */}
+                        <div className="bg-gradient-to-r from-gray-800/60 to-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-2xl p-6 shadow-xl">
+                            <div className="flex flex-col md:flex-row items-center gap-6">
+                                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center text-4xl font-bold text-white shadow-lg">
+                                    {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
                                 </div>
-
-                                {/* Goals & Lifestyle */}
-                                <div className="space-y-4 md:col-span-2 pt-4 border-t border-gray-700/50">
-                                    <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                                        <Target className="text-purple-400" size={20} /> Goals & Lifestyle
-                                    </h3>
-
-                                    <div className="grid md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-sm text-gray-400 mb-1">Activity Level</label>
-                                            <select
-                                                name="activityLevel"
-                                                value={profile.activityLevel}
-                                                onChange={handleChange}
-                                                className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                            >
-                                                <option value="sedentary">Sedentary (Office job)</option>
-                                                <option value="light">Lightly Active (1-3 days/week)</option>
-                                                <option value="moderate">Moderately Active (3-5 days/week)</option>
-                                                <option value="active">Active (6-7 days/week)</option>
-                                                <option value="very_active">Very Active (Physical job)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm text-gray-400 mb-1">Dietary Goal</label>
-                                            <select
-                                                name="goal"
-                                                value={profile.goal}
-                                                onChange={handleChange}
-                                                className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                            >
-                                                <option value="fat_loss">Fat Loss</option>
-                                                <option value="maintenance">Maintenance</option>
-                                                <option value="muscle_gain">Muscle Gain</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm text-gray-400 mb-1">Diet Preference</label>
-                                            <select
-                                                name="preference"
-                                                value={profile.preference}
-                                                onChange={handleChange}
-                                                className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                            >
-                                                <option value="omnivore">No Restrictions</option>
-                                                <option value="vegetarian">Vegetarian</option>
-                                                <option value="vegan">Vegan</option>
-                                                <option value="keto">Keto</option>
-                                                <option value="paleo">Paleo</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                <div className="text-center md:text-left flex-1">
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={profile.name}
+                                        onChange={handleChange}
+                                        className="text-2xl font-bold bg-transparent border-b-2 border-transparent hover:border-gray-600 focus:border-blue-500 text-white focus:outline-none transition-all pb-1 w-full md:w-auto"
+                                        placeholder="Your Name"
+                                    />
+                                    <p className="text-gray-400 mt-1">
+                                        {user ? `✓ Cloud synced • ${user.email}` : '⚠️ Stored locally'}
+                                    </p>
                                 </div>
-
-                                {/* Allergies & Conditions */}
-                                <div className="space-y-4 md:col-span-2 pt-4 border-t border-gray-700/50">
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                        <div>
-                                            <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                                                <AlertTriangle size={16} className="text-orange-400" /> Allergies
-                                            </h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {ALLERGIES_LIST.map(item => (
-                                                    <button
-                                                        key={item}
-                                                        onClick={() => toggleSelection('allergies', item)}
-                                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${profile.allergies?.includes(item)
-                                                            ? 'bg-orange-500/20 border-orange-500 text-orange-200'
-                                                            : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                                                            }`}
-                                                    >
-                                                        {item}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                                                <HeartPulse size={16} className="text-red-400" /> Medical Conditions
-                                            </h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {CONDITIONS_LIST.map(item => (
-                                                    <button
-                                                        key={item}
-                                                        onClick={() => toggleSelection('medicalConditions', item)}
-                                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${profile.medicalConditions?.includes(item)
-                                                            ? 'bg-red-500/20 border-red-500 text-red-200'
-                                                            : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                                                            }`}
-                                                    >
-                                                        {item}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 flex justify-end">
                                 <button
                                     onClick={handleSave}
-                                    className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-400 hover:to-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all transform active:scale-95 shadow-lg shadow-blue-500/20"
+                                    className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-400 hover:to-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all transform active:scale-95 shadow-lg shadow-blue-500/20"
                                 >
-                                    <Save size={20} />
-                                    {saved ? 'Saved!' : `Save Profile${user ? ' to Cloud' : ' Locally'}`}
+                                    <Save size={18} />
+                                    {saved ? 'Saved!' : 'Save'}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Calculated Targets Panel */}
-                        <div className="space-y-6">
-                            <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-md border border-blue-500/30 rounded-2xl p-6 shadow-xl">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Target className="text-blue-400" /> Daily Targets
+                        {/* Row 2: Stats Cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-xl p-4">
+                                <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Age</label>
+                                <input
+                                    type="number"
+                                    name="age"
+                                    value={profile.age || ''}
+                                    onChange={handleChange}
+                                    className="text-2xl font-bold bg-transparent text-white focus:outline-none w-full"
+                                    placeholder="25"
+                                />
+                            </div>
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-xl p-4">
+                                <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Gender</label>
+                                <select
+                                    name="gender"
+                                    value={profile.gender}
+                                    onChange={handleChange}
+                                    className="text-xl font-bold bg-transparent text-white focus:outline-none w-full capitalize"
+                                >
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-xl p-4">
+                                <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Height</label>
+                                <div className="flex items-baseline gap-1">
+                                    <input
+                                        type="number"
+                                        name="height"
+                                        value={profile.height || ''}
+                                        onChange={handleChange}
+                                        className="text-2xl font-bold bg-transparent text-white focus:outline-none w-20"
+                                        placeholder="175"
+                                    />
+                                    <span className="text-gray-500 text-sm">cm</span>
+                                </div>
+                            </div>
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-xl p-4">
+                                <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Weight</label>
+                                <div className="flex items-baseline gap-1">
+                                    <input
+                                        type="number"
+                                        name="weight"
+                                        value={profile.weight || ''}
+                                        onChange={handleChange}
+                                        className="text-2xl font-bold bg-transparent text-white focus:outline-none w-20"
+                                        placeholder="70"
+                                    />
+                                    <span className="text-gray-500 text-sm">kg</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Row 3: Goals + Daily Targets */}
+                        <div className="grid lg:grid-cols-3 gap-6">
+                            {/* Goals Card */}
+                            <div className="lg:col-span-2 bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-2xl p-6">
+                                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    <Target className="text-purple-400" size={20} /> Goals & Lifestyle
                                 </h3>
-                                <div className="space-y-4">
-                                    <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                                        <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Calories</p>
-                                        <p className="text-3xl font-bold text-white">{profile.dailyTargets?.calories || 0} <span className="text-sm text-gray-500 font-normal">kcal</span></p>
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label className="block text-sm text-gray-400 mb-2">Activity Level</label>
+                                        <select
+                                            name="activityLevel"
+                                            value={profile.activityLevel}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                                        >
+                                            <option value="sedentary">Sedentary</option>
+                                            <option value="light">Light Active</option>
+                                            <option value="moderate">Moderate</option>
+                                            <option value="active">Active</option>
+                                            <option value="very_active">Very Active</option>
+                                        </select>
                                     </div>
-
-                                    <div className="grid grid-cols-3 gap-2">
-                                        <div className="bg-gray-900/50 rounded-xl p-3 border border-gray-700/50 text-center">
-                                            <p className="text-blue-400 text-xs font-bold mb-1">Protein</p>
-                                            <p className="text-lg font-bold text-white">{profile.dailyTargets?.protein || 0}g</p>
-                                        </div>
-                                        <div className="bg-gray-900/50 rounded-xl p-3 border border-gray-700/50 text-center">
-                                            <p className="text-yellow-400 text-xs font-bold mb-1">Carbs</p>
-                                            <p className="text-lg font-bold text-white">{profile.dailyTargets?.carbs || 0}g</p>
-                                        </div>
-                                        <div className="bg-gray-900/50 rounded-xl p-3 border border-gray-700/50 text-center">
-                                            <p className="text-red-400 text-xs font-bold mb-1">Fat</p>
-                                            <p className="text-lg font-bold text-white">{profile.dailyTargets?.fat || 0}g</p>
-                                        </div>
+                                    <div>
+                                        <label className="block text-sm text-gray-400 mb-2">Dietary Goal</label>
+                                        <select
+                                            name="goal"
+                                            value={profile.goal}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                                        >
+                                            <option value="fat_loss">Fat Loss</option>
+                                            <option value="maintenance">Maintenance</option>
+                                            <option value="muscle_gain">Muscle Gain</option>
+                                        </select>
                                     </div>
-
-                                    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-blue-200 text-xs uppercase tracking-wider mb-1">Water Intake</p>
-                                            <p className="text-xl font-bold text-white">{profile.dailyTargets?.water || 0} <span className="text-sm text-blue-300 font-normal">Liters</span></p>
-                                        </div>
-                                        <Activity className="text-blue-400 opacity-50" />
+                                    <div>
+                                        <label className="block text-sm text-gray-400 mb-2">Diet Preference</label>
+                                        <select
+                                            name="preference"
+                                            value={profile.preference}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                                        >
+                                            <option value="omnivore">No Restrictions</option>
+                                            <option value="vegetarian">Vegetarian</option>
+                                            <option value="vegan">Vegan</option>
+                                            <option value="keto">Keto</option>
+                                            <option value="paleo">Paleo</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Trophy Room (Gamification) */}
-                            <div className="mt-8">
-                                <TrophyRoom />
+                            {/* Daily Targets Card */}
+                            <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur border border-blue-500/30 rounded-2xl p-6">
+                                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    <Activity className="text-blue-400" size={20} /> Daily Targets
+                                </h3>
+                                <div className="text-center mb-4">
+                                    <p className="text-4xl font-bold text-white">{profile.dailyTargets?.calories || 0}</p>
+                                    <p className="text-gray-400 text-sm">kcal/day</p>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                    <div className="bg-gray-900/50 rounded-lg p-2">
+                                        <p className="text-blue-400 text-xs font-bold">Protein</p>
+                                        <p className="text-white font-bold">{profile.dailyTargets?.protein || 0}g</p>
+                                    </div>
+                                    <div className="bg-gray-900/50 rounded-lg p-2">
+                                        <p className="text-yellow-400 text-xs font-bold">Carbs</p>
+                                        <p className="text-white font-bold">{profile.dailyTargets?.carbs || 0}g</p>
+                                    </div>
+                                    <div className="bg-gray-900/50 rounded-lg p-2">
+                                        <p className="text-red-400 text-xs font-bold">Fat</p>
+                                        <p className="text-white font-bold">{profile.dailyTargets?.fat || 0}g</p>
+                                    </div>
+                                </div>
+                                <div className="mt-4 bg-blue-500/10 rounded-lg p-3 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-blue-200 text-xs">Water Goal</p>
+                                        <p className="text-white font-bold">{profile.dailyTargets?.water || 0}L</p>
+                                    </div>
+                                    <Activity className="text-blue-400 opacity-50" />
+                                </div>
                             </div>
                         </div>
+
+                        {/* Row 4: Allergies & Conditions */}
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-2xl p-6">
+                                <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
+                                    <AlertTriangle size={16} className="text-orange-400" /> Allergies
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {ALLERGIES_LIST.map(item => (
+                                        <button
+                                            key={item}
+                                            onClick={() => toggleSelection('allergies', item)}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${profile.allergies?.includes(item)
+                                                ? 'bg-orange-500/20 border-orange-500 text-orange-200'
+                                                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                                                }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700/50 rounded-2xl p-6">
+                                <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
+                                    <HeartPulse size={16} className="text-red-400" /> Medical Conditions
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {CONDITIONS_LIST.map(item => (
+                                        <button
+                                            key={item}
+                                            onClick={() => toggleSelection('medicalConditions', item)}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${profile.medicalConditions?.includes(item)
+                                                ? 'bg-red-500/20 border-red-500 text-red-200'
+                                                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                                                }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Row 5: Gamification */}
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <LevelSystem />
+                            <StreakBonus currentStreak={7} />
+                        </div>
+
+                        {/* Row 6: Trophy Room */}
+                        <TrophyRoom />
                     </div>
                 </div>
             </main>

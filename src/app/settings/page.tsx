@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
-import { Settings as SettingsIcon, Bell, Shield, Trash2, ChevronRight } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
+import { Settings as SettingsIcon, Bell, Shield, Trash2, ChevronRight, Palette, Download, Crown } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Settings() {
     const [settings, setSettings] = useState({
@@ -82,6 +84,45 @@ export default function Settings() {
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                        </section>
+
+                        {/* Appearance */}
+                        <section className="bg-gray-800/30 backdrop-blur-md border border-gray-700/50 rounded-2xl overflow-hidden">
+                            <div className="p-6 border-b border-gray-700/50">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <Palette size={20} className="text-purple-400" /> Appearance
+                                </h3>
+                            </div>
+                            <div className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-medium text-white">Theme</p>
+                                        <p className="text-sm text-gray-400">Choose your preferred color scheme</p>
+                                    </div>
+                                    <ThemeToggle />
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Premium */}
+                        <section className="bg-gradient-to-r from-yellow-900/30 to-amber-900/30 backdrop-blur-md border border-yellow-500/30 rounded-2xl overflow-hidden">
+                            <div className="p-6 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center">
+                                        <Crown className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-white">Upgrade to Premium</p>
+                                        <p className="text-sm text-gray-400">Unlock unlimited AI analyses, advanced analytics & more</p>
+                                    </div>
+                                </div>
+                                <Link
+                                    href="/premium"
+                                    className="px-6 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all"
+                                >
+                                    Upgrade
+                                </Link>
                             </div>
                         </section>
 

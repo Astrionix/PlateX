@@ -6,6 +6,8 @@ import Sidebar from '@/components/Sidebar';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/components/AuthProvider';
 import { Camera, Trash2, Plus, Loader2 } from 'lucide-react';
+import FoodMoodTracker from '@/components/FoodMoodTracker';
+import ComparisonView from '@/components/ComparisonView';
 
 export default function Progress() {
     const { user, loading: authLoading } = useAuth();
@@ -99,6 +101,12 @@ export default function Progress() {
                             </div>
                         )}
                     </header>
+
+                    {/* Analytics Row */}
+                    <div className="grid md:grid-cols-2 gap-6 mb-8">
+                        <FoodMoodTracker />
+                        <ComparisonView />
+                    </div>
 
                     {/* Upload Section */}
                     <div className="bg-gray-800/50 backdrop-blur-md border border-gray-700 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center gap-6">

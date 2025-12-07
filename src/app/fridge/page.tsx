@@ -3,15 +3,24 @@
 import { useState } from 'react';
 import ThreeBackground from '@/components/ThreeBackground';
 import Sidebar from '@/components/Sidebar';
-import { ChefHat, Loader2, Plus, Sparkles, X } from 'lucide-react';
+import { ChefHat, Loader2, Plus, Sparkles, X, Check, Calendar } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
+import { useRouter } from 'next/navigation';
 
 export default function Fridge() {
     const { user } = useAuth();
+    const router = useRouter();
     const [ingredients, setIngredients] = useState<string[]>([]);
     const [newIngredient, setNewIngredient] = useState('');
     const [recipe, setRecipe] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
+    const [showMealPicker, setShowMealPicker] = useState(false);
+
+    const [error, setError] = useState<string | null>(null);
+
+    const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
     const addIngredient = (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,6 +38,7 @@ export default function Fridge() {
         if (ingredients.length === 0) return;
         setLoading(true);
         setRecipe(null);
+        setError(null);
         try {
             const res = await fetch('/api/suggest-recipe', {
                 method: 'POST',
@@ -36,13 +46,51 @@ export default function Fridge() {
                 body: JSON.stringify({ ingredients }),
             });
             const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || data.details || 'Failed to generate recipe');
+            }
+
             if (data.recipe) {
                 setRecipe(data.recipe);
+            } else {
+                throw new Error('No recipe returned');
             }
-        } catch (error) {
-            console.error('Error:', error);
+        } catch (err: any) {
+            console.error('Error:', err);
+            setError(err.message || 'Failed to generate recipe');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const saveToPlanner = async (mealType: string) => {
+        if (!recipe || !user) return;
+        setSaving(true);
+        try {
+            const res = await fetch('/api/save-recipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    recipe,
+                    mealType,
+                    date: new Date().toISOString().split('T')[0]
+                }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Failed to save recipe');
+            }
+
+            setSaved(true);
+            setShowMealPicker(false);
+            setTimeout(() => setSaved(false), 3000);
+        } catch (err: any) {
+            console.error('Save error:', err);
+            setError(err.message || 'Failed to save recipe');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -102,6 +150,12 @@ export default function Fridge() {
                                     {loading ? <Loader2 className="animate-spin" /> : <ChefHat />}
                                     {loading ? 'Cooking...' : 'Generate Recipe'}
                                 </button>
+
+                                {error && (
+                                    <div className="mt-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-sm">
+                                        {error}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -136,9 +190,42 @@ export default function Fridge() {
                                     </div>
 
                                     <div className="mt-6 pt-4 border-t text-center">
-                                        <button className="text-sm font-bold text-green-600 hover:underline flex items-center justify-center gap-1">
-                                            <Sparkles size={16} /> Save to Planner (Coming Soon)
-                                        </button>
+                                        {!user ? (
+                                            <p className="text-sm text-gray-500">Sign in to save recipes</p>
+                                        ) : saved ? (
+                                            <div className="flex items-center justify-center gap-2 text-green-600 font-bold">
+                                                <Check size={18} /> Saved to Planner!
+                                            </div>
+                                        ) : showMealPicker ? (
+                                            <div className="space-y-3">
+                                                <p className="text-sm text-gray-600 font-medium">Select meal type:</p>
+                                                <div className="flex flex-wrap justify-center gap-2">
+                                                    {mealTypes.map((type) => (
+                                                        <button
+                                                            key={type}
+                                                            onClick={() => saveToPlanner(type)}
+                                                            disabled={saving}
+                                                            className="px-4 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg text-sm font-bold transition-all disabled:opacity-50"
+                                                        >
+                                                            {saving ? <Loader2 className="animate-spin w-4 h-4" /> : type}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                                <button
+                                                    onClick={() => setShowMealPicker(false)}
+                                                    className="text-xs text-gray-400 hover:text-gray-600"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={() => setShowMealPicker(true)}
+                                                className="text-sm font-bold text-green-600 hover:text-green-500 flex items-center justify-center gap-1 mx-auto transition-colors"
+                                            >
+                                                <Sparkles size={16} /> Save to Planner
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ) : (
