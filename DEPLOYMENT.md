@@ -44,15 +44,14 @@ git push -u origin main
    - **Build Command**: `npm run build` (default)
    - **Output Directory**: `.next` (default)
 
-5. **Add Environment Variables**:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=https://vxpkgzuykitunmejfwoe.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   GEMINI_API_KEY=your_gemini_api_key
-   NUTRITIONIX_APP_ID=(optional)
-   NUTRITIONIX_APP_KEY=(optional)
-   ```
+   - **Add Environment Variables**:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+     SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+     GEMINI_API_KEY=your_gemini_key
+     GROQ_API_KEY=your_groq_key
+     ```
 
 6. Click "Deploy"
 
