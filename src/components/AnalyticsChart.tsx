@@ -62,7 +62,7 @@ export default function AnalyticsChart() {
     return (
         <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
             <h3 className="text-white font-bold mb-4">Calorie Trend (Last 7 Days)</h3>
-            <div className="h-48 w-full">
+            <div className="h-48 w-full min-h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={displayData}>
                         <XAxis dataKey="name" stroke="#6b7280" tick={{ fontSize: 12 }} />
