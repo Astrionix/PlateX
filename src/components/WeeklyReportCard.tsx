@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FileText, Loader2, Download, CheckCircle } from 'lucide-react';
+import { GET_API_URL } from '@/lib/api-config';
 
 interface WeeklyReportData {
     stats: {
@@ -28,7 +29,7 @@ export default function WeeklyReportCard() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch('/api/weekly-report');
+            const res = await fetch(GET_API_URL('/api/weekly-report'));
             const data = await res.json();
 
             if (!res.ok) {

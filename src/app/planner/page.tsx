@@ -5,6 +5,8 @@ import Sidebar from '@/components/Sidebar';
 import { Loader2, Utensils, Flame, ChevronRight, AlertCircle, ChefHat, Trash2, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
+import BioRhythmSync from '@/components/BioRhythmSync';
+import { GET_API_URL } from '@/lib/api-config';
 
 interface Meal {
     type: string;
@@ -63,7 +65,7 @@ export default function Planner() {
     const fetchSavedRecipes = async () => {
         setLoadingRecipes(true);
         try {
-            const res = await fetch('/api/save-recipe');
+            const res = await fetch(GET_API_URL('/api/save-recipe'));
             const data = await res.json();
             if (data.recipes) {
                 setSavedRecipes(data.recipes);
@@ -78,7 +80,7 @@ export default function Planner() {
     const generatePlan = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/planner', {
+            const res = await fetch(GET_API_URL('/api/planner'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ profile }),
@@ -154,6 +156,8 @@ export default function Planner() {
                         </div>
                     ) : (
                         <div className="space-y-8">
+                            <BioRhythmSync onUpdate={(adj) => console.log('Adjusting plan by', adj)} />
+
                             {!plan && (
                                 <div className="bg-gray-800/30 backdrop-blur-md border border-gray-700/50 rounded-2xl p-8 text-center shadow-xl">
                                     <Utensils className="w-16 h-16 text-blue-400 mx-auto mb-4 opacity-80" />

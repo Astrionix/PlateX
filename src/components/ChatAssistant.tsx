@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { GET_API_URL } from '@/lib/api-config';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -42,7 +43,7 @@ export default function ChatAssistant() {
             const savedProfile = localStorage.getItem('platex_profile');
             if (savedProfile) context = { profile: JSON.parse(savedProfile) };
 
-            const res = await fetch('/api/chat', {
+            const res = await fetch(GET_API_URL('/api/chat'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userMsg, context })
@@ -86,8 +87,8 @@ export default function ChatAssistant() {
                                     {msg.role === 'user' ? <User size={14} className="text-gray-300" /> : <Bot size={14} className="text-white" />}
                                 </div>
                                 <div className={`px-4 py-2 rounded-2xl text-sm max-w-[80%] ${msg.role === 'user'
-                                        ? 'bg-gray-800 text-white rounded-tr-none'
-                                        : 'bg-blue-600/20 border border-blue-500/30 text-blue-100 rounded-tl-none'
+                                    ? 'bg-gray-800 text-white rounded-tr-none'
+                                    : 'bg-blue-600/20 border border-blue-500/30 text-blue-100 rounded-tl-none'
                                     }`}>
                                     {msg.text}
                                 </div>

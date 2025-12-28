@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import { Calendar, ChefHat, RefreshCw, ShoppingCart, Loader2, ChevronLeft, ChevronRight, Sparkles, X, Check, Copy } from 'lucide-react';
+import SmartCheckout from '@/components/SmartCheckout';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabaseClient';
+import { GET_API_URL } from '@/lib/api-config';
 
 interface DayMeal {
     breakfast: { name: string; calories: number };
@@ -38,7 +40,7 @@ export default function WeeklyMealPrepPage() {
         try {
             const profile = JSON.parse(localStorage.getItem('platex_profile') || '{}');
 
-            const res = await fetch('/api/weekly-meal-plan', {
+            const res = await fetch(GET_API_URL('/api/weekly-meal-plan'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ profile }),
@@ -385,16 +387,19 @@ export default function WeeklyMealPrepPage() {
                                     router.push('/shopping-list');
                                 }}
                                 disabled={savingToList}
-                                className="w-full mt-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl font-medium hover:from-green-400 hover:to-blue-500 flex items-center justify-center gap-2 disabled:opacity-50"
+                                className="w-full mt-6 mb-4 py-3 bg-gray-800 border border-gray-700/50 rounded-xl font-medium hover:bg-gray-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                                 {savingToList ? (
-                                    <><Loader2 className="animate-spin" size={18} /> Adding to Shopping List...</>
+                                    <><Loader2 className="animate-spin" size={18} /> Adding...</>
                                 ) : copiedToList ? (
                                     <><Check size={18} /> Copied!</>
                                 ) : (
-                                    <><Copy size={18} /> {user ? 'Add to Shopping List' : 'Copy to Clipboard'}</>
+                                    <><Copy size={18} /> {user ? 'Save to App List' : 'Copy to Clipboard'}</>
                                 )}
                             </button>
+
+                            {/* Smart Checkout Integration */}
+                            <SmartCheckout items={generateShoppingList()} />
                         </div>
                     </div>
                 </div>

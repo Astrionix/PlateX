@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import { ChefHat, Loader2, Plus, Sparkles, X, Check, Calendar } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
+import { GET_API_URL } from '@/lib/api-config';
 
 export default function Fridge() {
     const { user } = useAuth();
@@ -40,7 +41,7 @@ export default function Fridge() {
         setRecipe(null);
         setError(null);
         try {
-            const res = await fetch('/api/suggest-recipe', {
+            const res = await fetch(GET_API_URL('/api/suggest-recipe'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ingredients }),
@@ -68,7 +69,7 @@ export default function Fridge() {
         if (!recipe || !user) return;
         setSaving(true);
         try {
-            const res = await fetch('/api/save-recipe', {
+            const res = await fetch(GET_API_URL('/api/save-recipe'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

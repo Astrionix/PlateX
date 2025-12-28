@@ -1,7 +1,7 @@
 'use client';
 
 import HistoryList from './HistoryList';
-import { LayoutDashboard, Settings, User, ChefHat, X, Utensils, ShoppingCart, TrendingUp, LogOut, LogIn, Flame, Crown } from 'lucide-react';
+import { LayoutDashboard, Settings, User, ChefHat, X, Utensils, ShoppingCart, TrendingUp, LogOut, LogIn, Flame, Crown, Scan } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from './AuthProvider';
@@ -22,13 +22,14 @@ export default function Sidebar({ onSelectLog, refreshTrigger, isOpen, onClose }
     const navItems = [
         { href: '/', icon: LayoutDashboard, label: 'Dashboard', color: 'green' },
         { href: '/planner', icon: Utensils, label: 'Diet Planner', color: 'blue' },
-        { href: '/meal-prep', icon: Utensils, label: 'Meal Prep', color: 'cyan', badge: 'NEW' },
-        { href: '/fridge', icon: ChefHat, label: 'Chef AI', color: 'emerald', badge: 'AI' },
+        { href: '/ar-menu', icon: Scan, label: 'AR Menu X-Ray', color: 'pink', badge: 'AR' },
+        { href: '/social', icon: Crown, label: 'Social Hub', color: 'yellow', badge: 'NEW' },
+        { href: '/body-tracker', icon: User, label: 'Body Projector', color: 'cyan', badge: '3D' },
+        { href: '/chef-mode/demo', icon: ChefHat, label: 'Chef Mode', color: 'emerald', badge: 'AI' },
+        { href: '/meal-prep', icon: Utensils, label: 'Meal Prep', color: 'purple' },
+        { href: '/fridge', icon: ChefHat, label: 'Chef AI', color: 'orange' },
         { href: '/shopping-list', icon: ShoppingCart, label: 'Shopping', color: 'blue' },
-        { href: '/progress', icon: TrendingUp, label: 'Progress', color: 'purple' },
-        { href: '/profile', icon: User, label: 'Profile', color: 'orange' },
-        { href: '/nutritionist', icon: User, label: 'Nutritionist', color: 'pink' },
-        { href: '/premium', icon: Crown, label: 'Premium', color: 'yellow', badge: 'PRO' },
+        { href: '/progress', icon: TrendingUp, label: 'Progress', color: 'pink' },
         { href: '/settings', icon: Settings, label: 'Settings', color: 'gray' },
     ];
 

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Sparkles, Bot, User } from 'lucide-react';
+import { GET_API_URL } from '@/lib/api-config';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -34,7 +35,7 @@ export default function AIChatAssistant() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/chat', {
+            const res = await fetch(GET_API_URL('/api/chat'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userMessage, history: messages }),
@@ -85,14 +86,14 @@ export default function AIChatAssistant() {
                         {messages.map((msg, idx) => (
                             <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user'
-                                        ? 'bg-blue-500'
-                                        : 'bg-gradient-to-br from-green-500 to-blue-600'
+                                    ? 'bg-blue-500'
+                                    : 'bg-gradient-to-br from-green-500 to-blue-600'
                                     }`}>
                                     {msg.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
                                 </div>
                                 <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${msg.role === 'user'
-                                        ? 'bg-blue-600 text-white rounded-br-md'
-                                        : 'bg-gray-800 text-gray-200 rounded-bl-md'
+                                    ? 'bg-blue-600 text-white rounded-br-md'
+                                    : 'bg-gray-800 text-gray-200 rounded-bl-md'
                                     }`}>
                                     <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                                 </div>

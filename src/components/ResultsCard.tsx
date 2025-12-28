@@ -6,6 +6,7 @@ import BloodSugarChart from './BloodSugarChart';
 import { AlertTriangle, ChefHat, Clock, Flame, Loader2, X, Activity, Share2, Download, ShoppingCart, Check } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { supabase } from '@/lib/supabaseClient';
+import { GET_API_URL } from '@/lib/api-config';
 
 interface Ingredient {
     name: string;
@@ -95,7 +96,7 @@ export default function ResultsCard({ result, onReset }: ResultsCardProps) {
         setLoadingRecipe(true);
         try {
             const ingredientNames = result.ingredients.map(i => i.name);
-            const res = await fetch('/api/suggest-recipe', {
+            const res = await fetch(GET_API_URL('/api/suggest-recipe'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ingredients: ingredientNames })
@@ -381,8 +382,8 @@ export default function ResultsCard({ result, onReset }: ResultsCardProps) {
                                         onClick={handleAddToCart}
                                         disabled={addingToCart || addedToCart}
                                         className={`p-1.5 rounded-lg transition-colors ${addedToCart
-                                                ? 'bg-green-500/20 text-green-400'
-                                                : 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30'
+                                            ? 'bg-green-500/20 text-green-400'
+                                            : 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30'
                                             }`}
                                         title="Add to Shopping List"
                                     >

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Upload, Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
+import { GET_API_URL } from '@/lib/api-config';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 interface UploadCardProps {
     onResult: (data: any) => void;
@@ -29,6 +31,7 @@ export default function UploadCard({ onResult }: UploadCardProps) {
         setDragActive(false);
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             setFile(e.dataTransfer.files[0]);
+            Haptics.impact({ style: ImpactStyle.Light });
         }
     };
 
@@ -36,6 +39,7 @@ export default function UploadCard({ onResult }: UploadCardProps) {
         e.preventDefault();
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
+            Haptics.impact({ style: ImpactStyle.Light });
         }
     };
 
@@ -46,6 +50,7 @@ export default function UploadCard({ onResult }: UploadCardProps) {
                 const pastedFile = e.clipboardData.files[0];
                 if (pastedFile && pastedFile.type.startsWith('image/')) {
                     setFile(pastedFile);
+                    Haptics.impact({ style: ImpactStyle.Light });
                 }
             }
         };
@@ -56,11 +61,12 @@ export default function UploadCard({ onResult }: UploadCardProps) {
 
     const submit = async () => {
         if (!file) return;
+        Haptics.impact({ style: ImpactStyle.Heavy });
         setLoading(true);
         try {
             const fd = new FormData();
             fd.append('image', file);
-            const res = await fetch('/api/analyze', { method: 'POST', body: fd });
+            const res = await fetch(GET_API_URL('/api/analyze'), { method: 'POST', body: fd });
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
                 console.error('Server Error Details:', errData);
