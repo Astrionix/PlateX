@@ -18,13 +18,14 @@ export default function AndroidBackHandler() {
             const now = Date.now();
 
             // If we are on the root path or login, exit the app
-            if (pathname === '/' || pathname === '/login') {
-                // Prevent accidental exits: require simple double tap or just exit?
-                // Standard Android behavior is exit on root
+            if (pathname === '/login') {
+                App.exitApp();
+            } else if (pathname === '/') {
                 App.exitApp();
             } else {
-                // Otherwise go back in history
-                router.back();
+                // If we are deep in a tab, go HOME first instead of just "back" in history
+                // This ensures users don't get stuck in a history loop
+                router.push('/');
             }
         });
 
