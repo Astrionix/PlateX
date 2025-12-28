@@ -1,12 +1,11 @@
 'use client';
 
-import { ArrowLeft, Menu, MoreVertical } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Capacitor } from '@capacitor/core';
 
 interface MobileHeaderProps {
-    onMenuClick: () => void;
+    onMenuClick?: () => void;
 }
 
 export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
@@ -14,7 +13,6 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
     const router = useRouter();
     const [scrolled, setScrolled] = useState(false);
 
-    // Track scroll for extra glass effect intensity
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 10);
@@ -23,14 +21,10 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Don't show on login/signup/onboarding
-    if (['/login', '/signup', '/onboarding'].includes(pathname)) return null;
-
-    const isHome = pathname === '/';
+    // Don't show on login/signup/onboarding AND Don't show on Dashboard ('/')
+    if (['/login', '/signup', '/onboarding', '/'].includes(pathname)) return null;
 
     const getPageTitle = (path: string) => {
-        if (path === '/') return 'Dashboard';
-
         // Remove leading slash and split by slash
         const parts = path.substring(1).split('/');
 
@@ -38,14 +32,14 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
         const section = parts[0];
         switch (section) {
             case 'planner': return 'Diet Planner';
-            case 'ar-menu': return 'AR Menu X-Ray';
+            case 'ar-menu': return 'AR Menu';
             case 'social': return 'Social Hub';
             case 'body-tracker': return 'Body Projector';
             case 'chef-mode': return 'Chef Mode';
             case 'meal-prep': return 'Meal Prep';
             case 'fridge': return 'Chef AI';
             case 'shopping-list': return 'Shopping List';
-            case 'progress': return 'Results & Progress';
+            case 'progress': return 'Progress';
             case 'settings': return 'Settings';
             case 'premium': return 'Premium';
             default: return section.charAt(0).toUpperCase() + section.slice(1);
@@ -61,26 +55,16 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
                     ? 'bg-black/60 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20'
                     : 'bg-transparent'
                 }
-                ${isHome ? 'pt-safe-top' : ''} 
             `}
         >
-            {/* Left Action: Back or Menu */}
+            {/* Left Action: Home/Back */}
             <div className="flex items-center gap-2">
-                {isHome ? (
-                    <button
-                        onClick={onMenuClick}
-                        className="p-2 -ml-2 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors"
-                    >
-                        <Menu className="w-6 h-6 text-white" />
-                    </button>
-                ) : (
-                    <button
-                        onClick={() => router.back()}
-                        className="p-2 -ml-2 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors group"
-                    >
-                        <ArrowLeft className="w-6 h-6 text-white group-active:-translate-x-1 transition-transform" />
-                    </button>
-                )}
+                <button
+                    onClick={() => router.push('/')}
+                    className="p-2 -ml-2 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors group"
+                >
+                    <ArrowLeft className="w-6 h-6 text-white group-active:-translate-x-1 transition-transform" />
+                </button>
             </div>
 
             {/* Center Title */}
@@ -90,12 +74,8 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
                 </h1>
             </div>
 
-            {/* Right Action: Placeholder or Context Menu */}
-            <div className="flex items-center gap-2">
-                <button className="p-2 -mr-2 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors">
-                    <MoreVertical className="w-6 h-6 text-white opacity-0" /> {/* Invisible spacer for balance, or make specific actions */}
-                </button>
-            </div>
+            {/* Right Action: Spacer */}
+            <div className="w-10"></div>
         </header>
     );
 }
