@@ -3,11 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import ChatAssistant from "@/components/ChatAssistant";
-import VoiceCommandCenter from "@/components/VoiceCommandCenter";
-import OfflineBanner from "@/components/OfflineBanner";
-import BiometricGuard from "@/components/BiometricGuard";
-import AndroidBackHandler from "@/components/AndroidBackHandler";
-import MobileHeader from "@/components/MobileHeader";
+import ClientLayout from "@/components/ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,18 +39,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AuthProvider>
-          <BiometricGuard>
-            <AndroidBackHandler />
-            <OfflineBanner />
-            <MobileHeader onMenuClick={() => {
-              // Dispatch event for Sidebar to pick up
-              if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('toggleSidebar'));
-              }
-            }} />
-            <VoiceCommandCenter />
+          <ClientLayout>
             {children}
-          </BiometricGuard>
+          </ClientLayout>
           <ChatAssistant />
         </AuthProvider>
       </body>
