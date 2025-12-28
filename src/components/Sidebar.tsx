@@ -114,6 +114,7 @@ export default function Sidebar({ onSelectLog, refreshTrigger, isOpen, onClose }
                                 key={item.href}
                                 href={item.href}
                                 onClick={onClose}
+                                prefetch={true}
                                 className={`
                                     flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative
                                     ${active
