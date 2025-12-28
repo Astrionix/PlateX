@@ -6,6 +6,7 @@ import ChatAssistant from "@/components/ChatAssistant";
 import VoiceCommandCenter from "@/components/VoiceCommandCenter";
 import OfflineBanner from "@/components/OfflineBanner";
 import BiometricGuard from "@/components/BiometricGuard";
+import AndroidBackHandler from "@/components/AndroidBackHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <BiometricGuard>
+            <AndroidBackHandler />
             <OfflineBanner />
             <VoiceCommandCenter />
             {children}

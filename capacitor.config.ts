@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'PlateX',
   webDir: 'out',
   server: {
-    url: 'https://plate-x.vercel.app/',
+    url: 'https://plate-7x0nup8qg-chandus-projects-49b21a78.vercel.app/',
     cleartext: true
   },
   plugins: {
