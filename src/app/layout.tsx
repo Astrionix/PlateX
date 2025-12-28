@@ -7,6 +7,7 @@ import VoiceCommandCenter from "@/components/VoiceCommandCenter";
 import OfflineBanner from "@/components/OfflineBanner";
 import BiometricGuard from "@/components/BiometricGuard";
 import AndroidBackHandler from "@/components/AndroidBackHandler";
+import MobileHeader from "@/components/MobileHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,12 @@ export default function RootLayout({
           <BiometricGuard>
             <AndroidBackHandler />
             <OfflineBanner />
+            <MobileHeader onMenuClick={() => {
+              // Dispatch event for Sidebar to pick up
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('toggleSidebar'));
+              }
+            }} />
             <VoiceCommandCenter />
             {children}
           </BiometricGuard>
